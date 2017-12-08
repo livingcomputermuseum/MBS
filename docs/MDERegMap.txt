@@ -1,0 +1,104 @@
+UPE_MDI register definitions:
+
+0x00xx  rw  drive registers (128x16)
+
+    These are 8 copies of the RP06 registers, of which only the first is
+    actually implemented. Each 16 bit register occupies the right (least
+    significant) part of a 32 bit word on the PC. This corresponds to 32
+    registers for each drive, like the massbus is set up for even though they
+    never used more than 16 as far as I know.
+    
+0x04xx  rw  drives attached
+
+    This is where I intend to put drive enable bits. I think currently there are
+    8 bits at the bottom of the first 32 bit word for drive enables. You can
+    read this anywhere in the range, but only write it at 0x400.
+
+0x08xx  rw  data clock divisor
+
+    There is an 8 bit divisor located in the LSB of the first word here. It
+    currently defaults to 24, which gives a 25 clock cycle or about 500ns for
+    each half cycle of the massbus SCLK.  You can read this anywhere in the
+    range, but only write it at 0x800.
+    
+0x0cxx  rw  Transfer delay register
+
+    This 8 bit register controls how many of the 48MHz clocks the massbus demand
+    signal must be valid before we will respond and issue MB_TRA. It defaults to
+    0x3f which results in 6 clocks, because it is a shift register.  You can
+    read this anywhere in the range, but only write it at 0xc00.
+
+0x10xx  ro  commmand fifo
+
+    This is a fifo of commands that the drive has received that the PC must
+    respond to. Currently it only gets data transfer commands. This is a copy of
+    Drive register 0, when the controller writes a valid data movement command
+    into it. It is aligned just like the regular registers. In bits 18 downto 16
+    there is the drive for which the command was issued. Reading it anywhere in
+    the 1KB range, removes the command from the fifo.
+
+0x14xx  rw  Disk Drive configuration register
+
+    This register configures sectors, heads and cylinders for a disk drive. the
+    bits are:
+    
+    30..16 last cylinder number
+    15..8 last head number
+    7..0 last sector number
+    
+    This results in a maximun half terabyte drive with standard 256 byte
+    sectors. Like the other registers this one can be read anywhere in the
+    range, but only written at 0.
+
+0x18xx  rw Counters
+and Revision registers
+
+    At 0 is the control bus parity error counter, and at 0x4, is the data bus
+    parity error counter. These counters are both 20 bits long, so we should be
+    able to count a million errors.
+    
+    The control bus counter counts control bus writes that have bad parity.
+    
+    The data bus counter counts write transactions that had an error in them.
+    This may be any sector in a multi sector write, or multiple sectors in a
+    write will both only increment the counter by one.
+    
+    At 0x10, is the VHDL Version number, Major and Minor Revisions 8 bits each.
+    
+    These registers repeat with each drive, writes happen at the lowest
+    locations, but reads can happen anywhere.
+    
+0x1cxx  rw Sector Read counters
+    Each drive has a read counter:
+    0x1c00  drive 0
+    0x1c04  drive 1
+    0x1c08  drive 2
+    0x1c0c  drive 3
+    0x1c10  drive 4
+    0x1c14  drive 5
+    0x1c18  drive 6
+    0x1c1c  drive 7
+    
+0x20xx  rw Sector Write counters
+    Each drive has a Write counter:
+    0x2000  drive 0
+    0x2004  drive 1
+    0x2008  drive 2
+    0x200c  drive 3
+    0x2010  drive 4
+    0x2014  drive 5
+    0x2018  drive 6
+    0x201c  drive 7
+
+0x8xxx  Data Area (32KB)
+
+    This is comprised of 18 bit words in the right of the 32 bit words that the
+    PC sees. The MSb of each word on read has a bit that is 1 if there was valid
+    data there, and a zero if the fifo had no data.
+    
+    11/1/2013 6:37:28 PM we think we have a bootable disk,
+    
+    Currently the PC will have to properly align the data into the right half on
+    writes, but we could probably move that to the xilinx should we decide that
+    is a good idea.
+    
