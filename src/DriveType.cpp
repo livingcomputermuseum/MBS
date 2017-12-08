@@ -3,7 +3,8 @@
 //                  CDiskType  (MASSBUS disk drive characteristics)
 //                  CTapeType  (MASSBUS tape drive characteristics)
 //
-//       COPYRIGHT (C) 2017 BY THE LIVING COMPUTER MUSEUM, SEATTLE WA.
+//       COPYRIGHT (C) 2015-2017 Vulcan Inc.
+//       Developed by Living Computers: Museum+Labs
 //
 // LICENSE:
 //    This file is part of the MASSBUS SERVER project.  MBS is free software;

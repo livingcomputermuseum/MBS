@@ -1,7 +1,8 @@
 //++
 // decupe.hpp -> CDECUPE (DEC specific FPGA/UPE) interface class declarations
 //
-//       COPYRIGHT (C) 2017 BY THE LIVING COMPUTER MUSEUM, SEATTLE WA.
+//       COPYRIGHT (C) 2015-2017 Vulcan Inc.
+//       Developed by Living Computers: Museum+Labs
 //
 // DESCRIPTION:
 //   The CDECUPE class wraps the generic CUPE class implemented in the UPELIB.
